@@ -1,5 +1,4 @@
 ﻿using Assets.oojjrs.Script.MyField;
-using Assets.Sources.Scripts;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,19 +11,25 @@ namespace Assets.Scenes.FlowField
         [SerializeField]
         private GameObject _obstacle;
 
-        Vector2Int MyFlowField.TileInterface.Coordinate => new(Hex.Q, Hex.R);
+        Vector2Int MyFlowField.TileInterface.Coordinate => new((int)transform.position.x, (int)transform.position.z);
         IEnumerable<Vector2Int> MyFlowField.TileInterface.Neighbors
         {
             get
             {
-                foreach (var hex in Hex.Neighbors)
-                    yield return (Vector2Int)hex;
+                var c = ((MyFlowField.TileInterface)this).Coordinate;
+                yield return new(c.x - 1, c.y - 1);
+                yield return new(c.x - 1, c.y);
+                yield return new(c.x - 1, c.y + 1);
+                yield return new(c.x, c.y - 1);
+                yield return new(c.x, c.y + 1);
+                yield return new(c.x + 1, c.y - 1);
+                yield return new(c.x + 1, c.y);
+                yield return new(c.x + 1, c.y + 1);
             }
         }
         Vector2 MyFlowField.TileInterface.Position => new(transform.position.x, transform.position.z);
         bool MyFlowField.TileInterface.Walkable => Walkable;
 
-        public Hex Hex { get; set; }
         public bool Walkable { get; set; }
 
         private void Start()
