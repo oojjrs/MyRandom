@@ -1,5 +1,6 @@
 ﻿using Assets.oojjrs.Script;
 using Assets.oojjrs.Script.MyField;
+using Assets.Sources.Scripts;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,29 +9,23 @@ namespace Assets.Scenes.FlowField
     public class Plane : MonoBehaviour
     {
         [SerializeField]
-        private int _height = 10;
-        [SerializeField]
         private Tile _tilePrefab;
-        [SerializeField]
-        private int _width = 10;
 
         private void Start()
         {
             var ret = new List<Tile>();
-            for (int x = -_width / 2; x < _width / 2; ++x)
+            foreach (var hex in Hex.GetRange(new(0, 0, 1.5f, Hex.FormEnum.PointyTopped), 10))
             {
-                for (int y = -_height / 2; y < _height / 2; ++y)
-                {
-                    var tile = Instantiate(_tilePrefab);
-                    tile.name = $"({x + _width / 2}, {y + _height / 2})";
-                    tile.transform.SetParent(transform);
-                    tile.transform.position = new(x, 0, y);
-                    tile.Walkable = MyRandom.Range(0f, 1f) > 0.2f;
-                    if (x == 0 && y == 0)
-                        tile.Walkable = true;
+                var tile = Instantiate(_tilePrefab);
+                tile.name = $"({hex.Q}, {hex.R})";
+                tile.transform.SetParent(transform);
+                tile.transform.position = hex.ToWorld3D();
+                tile.Hex = hex;
+                tile.Walkable = MyRandom.Range(0f, 1f) > 0.5f;
+                if (hex.Q == 0 && hex.R == 0)
+                    tile.Walkable = true;
 
-                    ret.Add(tile);
-                }
+                ret.Add(tile);
             }
 
             MyNavigator.Instance.SetField(ret.ToArray());
