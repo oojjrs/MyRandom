@@ -99,7 +99,7 @@ namespace Assets.oojjrs.Script.MyField
         {
             foreach (var coordinate in node.Tile.Neighbors)
             {
-                if (Nodes.TryGetValue(coordinate, out var value) && (value.Fresh == false))
+                if (Nodes.TryGetValue(coordinate, out var value) && (value.Fresh == false) && value.Tile.Walkable)
                     yield return value;
             }
         }
