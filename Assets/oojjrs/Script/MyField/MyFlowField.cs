@@ -25,6 +25,8 @@ namespace Assets.oojjrs.Script.MyField
 
         private class Node : NodeInterface
         {
+            public Vector2Int Coordiate { get; }
+            public float CostToTarget { get; set; }
             public Vector2? Direction { get; set; }
             public bool Fresh { get; set; }
             public bool Target { get; }
@@ -32,7 +34,8 @@ namespace Assets.oojjrs.Script.MyField
 
             public Node(TileInterface tile, bool target)
             {
-                Fresh = true;
+                Coordiate = tile.Coordinate;
+                Fresh = target == false;
                 Target = target;
                 Tile = tile;
             }
@@ -62,18 +65,20 @@ namespace Assets.oojjrs.Script.MyField
                 var ret = GetNeighbors(node);
                 if (ret.Any())
                 {
-                    var nodePosition = node.Tile.Position;
                     var neighbors = ret.ToArray();
-                    foreach (var n in neighbors)
+                    foreach (var nnode in neighbors)
                     {
-                        n.Fresh = false;
-
-                        if ((n.Target == false) && n.Tile.Walkable)
+                        if (nnode.Tile.Walkable)
                         {
-                            n.Direction = (nodePosition - n.Tile.Position).normalized;
-                            q.Enqueue(n);
+                            var lowestCostNode = GetFixeds(nnode).OrderBy(t => t.CostToTarget).First();
+                            nnode.CostToTarget = lowestCostNode.CostToTarget + (lowestCostNode.Tile.Position - nnode.Tile.Position).magnitude;
+                            nnode.Direction = (lowestCostNode.Tile.Position - nnode.Tile.Position).normalized;
+                            q.Enqueue(nnode);
                         }
                     }
+
+                    foreach (var nnode in neighbors)
+                        nnode.Fresh = false;
                 }
 
                 if (Time.time - time > 0.01)
@@ -86,6 +91,15 @@ namespace Assets.oojjrs.Script.MyField
 
             if (keepGoingOn())
                 onFinish?.Invoke();
+        }
+
+        private IEnumerable<Node> GetFixeds(Node node)
+        {
+            foreach (var coordinate in node.Tile.Neighbors)
+            {
+                if (Nodes.TryGetValue(coordinate, out var value) && (value.Fresh == false))
+                    yield return value;
+            }
         }
 
         private IEnumerable<Node> GetNeighbors(Node node)
