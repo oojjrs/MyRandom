@@ -38,6 +38,11 @@ namespace Assets.Scenes.FlowField
             _obstacle.SetActive(Walkable == false);
         }
 
+        float MyFlowField.TileInterface.GetCost(MyFlowField.TileInterface toTile)
+        {
+            return (((MyFlowField.TileInterface)this).Position - toTile.Position).magnitude;
+        }
+
         public void UpdateDirection(Vector2? dir)
         {
             if (Walkable)

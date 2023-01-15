@@ -21,6 +21,8 @@ namespace Assets.oojjrs.Script.MyField
             IEnumerable<Vector2Int> Neighbors { get; }
             Vector2 Position { get; }
             bool Walkable { get; }
+
+            float GetCost(TileInterface toTile);
         }
 
         private class Node : NodeInterface
@@ -73,7 +75,7 @@ namespace Assets.oojjrs.Script.MyField
                         if (nnode.Tile.Walkable)
                         {
                             var lowestCostNode = GetFixeds(nnode).OrderBy(t => t.CostToTarget).First();
-                            nnode.CostToTarget = lowestCostNode.CostToTarget + (lowestCostNode.Tile.Position - nnode.Tile.Position).magnitude;
+                            nnode.CostToTarget = lowestCostNode.CostToTarget + lowestCostNode.Tile.GetCost(nnode.Tile);
                             nnode.Direction = (lowestCostNode.Tile.Position - nnode.Tile.Position).normalized;
                             q.Enqueue(nnode);
                         }
