@@ -52,6 +52,8 @@ namespace Assets.oojjrs.Script.MyField
 
         public IEnumerator CalculateAsync(Action onFinish, Func<bool> keepGoingOn)
         {
+            yield return default;
+
             if (keepGoingOn == default)
                 keepGoingOn = () => true;
 

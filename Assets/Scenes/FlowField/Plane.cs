@@ -1,4 +1,5 @@
-﻿using Assets.oojjrs.Script.MyField;
+﻿using Assets.oojjrs.Script;
+using Assets.oojjrs.Script.MyField;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,6 +25,9 @@ namespace Assets.Scenes.FlowField
                     tile.name = $"({x + _width / 2}, {y + _height / 2})";
                     tile.transform.SetParent(transform);
                     tile.transform.position = new(x, 0, y);
+                    tile.Walkable = MyRandom.Range(0f, 1f) > 0.2f;
+                    if (x == 0 && y == 0)
+                        tile.Walkable = true;
 
                     ret.Add(tile);
                 }
