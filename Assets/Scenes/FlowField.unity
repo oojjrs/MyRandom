@@ -235,6 +235,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _height: 10
+  _navigator: {fileID: 1369385935}
   _tilePrefab: {fileID: 6549844571284197528, guid: ea28896fc26af2045b3b358ea7ee35f1, type: 3}
   _width: 10
 --- !u!1 &1369385934

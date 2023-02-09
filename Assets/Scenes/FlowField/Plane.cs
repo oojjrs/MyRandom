@@ -10,6 +10,8 @@ namespace Assets.Scenes.FlowField
         [SerializeField]
         private int _height = 10;
         [SerializeField]
+        private MyNavigator _navigator;
+        [SerializeField]
         private Tile _tilePrefab;
         [SerializeField]
         private int _width = 10;
@@ -33,12 +35,12 @@ namespace Assets.Scenes.FlowField
                 }
             }
 
-            MyNavigator.Instance.SetField(ret.ToArray());
+            _navigator.SetField(ret.ToArray(), pos => new((int)pos.x, (int)pos.z));
 
-            MyNavigator.Instance.Calculate(Vector2Int.zero, (nav, field) =>
+            _navigator.Calculate(Vector2Int.zero, (nav, field) =>
             {
                 foreach (var tile in ret)
-                    tile.UpdateDirection(field.GetNode(((MyFlowField.TileInterface)tile).Coordinate).Direction);
+                    tile.UpdateDirection(field.GetNode(((MyFlowField.TileInterface)tile).Coordinate).Power);
             });
         }
     }
