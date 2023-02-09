@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Assets.Sources.Scripts.Editor
+namespace Assets.oojjrs.Script.Editor
 {
     public interface ClientBridgeInterface
     {

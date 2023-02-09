@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Sources.Scripts.Editor
+namespace Assets.oojjrs.Script.Editor
 {
     public class EditorControl
     {

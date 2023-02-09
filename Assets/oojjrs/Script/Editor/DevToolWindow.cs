@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Sources.Scripts.Editor
+namespace Assets.oojjrs.Script.Editor
 {
     [ExecuteInEditMode]
     public abstract class DevToolWindow : EditorWindow

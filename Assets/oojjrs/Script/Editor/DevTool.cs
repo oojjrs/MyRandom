@@ -1,7 +1,7 @@
 ﻿#if UNITY_EDITOR
 using UnityEngine;
 
-namespace Assets.Sources.Scripts.Editor
+namespace Assets.oojjrs.Script.Editor
 {
     [ExecuteInEditMode]
     public abstract class DevTool : EditorControl
