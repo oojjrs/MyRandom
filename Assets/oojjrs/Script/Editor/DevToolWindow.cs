@@ -50,7 +50,7 @@ namespace Assets.oojjrs.Script.Editor
                 foreach (var (name, value) in Values)
                 {
                     if (value.Any())
-                        EditorControl.FoldoutBox(value, name, () => EditorControl.GUICall(() => value.ForEach(t => t.OnDraw())));
+                        EditorControl.FoldoutBox(name, name, () => EditorControl.GUICall(() => value.ForEach(t => t.OnDraw())));
                 }
             });
         }
