@@ -39,6 +39,17 @@ namespace Assets.oojjrs.Script.MyField
             }
         }
         public Vector3 Source { get; }
+        public MyFlowField.NodeInterface TargetNode
+        {
+            get
+            {
+                var currentNode = FromNode;
+                while ((currentNode != default) && (currentNode.Target == false))
+                    currentNode = currentNode.NextNode;
+
+                return currentNode;
+            }
+        }
 
         public MyPath(MyFlowField field, MyFlowField.NodeInterface fromNode, Vector3 src, Vector3 dst)
         {

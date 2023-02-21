@@ -151,29 +151,33 @@ namespace Assets.oojjrs.Script.MyField
 
         private IEnumerator SearchAroundTiles(Vector3 src, Vector3 dst, MyFlowField.TileIntermediate fromTile, MyFlowField.TileIntermediate toTile, Action<MyPath> onFinish, Func<bool> keepGoingOn = default)
         {
-            foreach (var aroundTile in toTile.Tile.AroundCoordinates.Select(c => Tiles.TryGetValue(c, out var tile) ? tile : default).Where(t => (t != default) && t.Tile.Walkable).OrderBy(t => (t.Position - dst).sqrMagnitude))
+            var groups = toTile.Tile.AroundCoordinates.Select(c => Tiles.TryGetValue(c, out var tile) ? tile : default).Where(t => (t != default) && t.Tile.Walkable).GroupBy(t => t.Tile.GetCost(toTile.Tile)).OrderBy(g => g.Key);
+            foreach (var group in groups)
             {
-                var b = false;
-                var ret = false;
-                Calculate(aroundTile.Coordinate, (nav, field) =>
+                foreach (var aroundTile in group.OrderBy(t => (t.Position - dst).sqrMagnitude).ThenBy(t => (t.Position - src).sqrMagnitude))
                 {
-                    var path = field.GetPath(fromTile.Coordinate, src, aroundTile.Position + (toTile.Position - aroundTile.Position).normalized * aroundTile.Tile.Length);
-                    if (path != default)
+                    var b = false;
+                    var ret = false;
+                    Calculate(aroundTile.Coordinate, (nav, field) =>
                     {
-                        b = true;
+                        var path = field.GetPath(fromTile.Coordinate, src, aroundTile.Position + (toTile.Position - aroundTile.Position).normalized * aroundTile.Tile.Length);
+                        if (path != default)
+                        {
+                            b = true;
 
-                        onFinish?.Invoke(path);
+                            onFinish?.Invoke(path);
 
-                        OnUsed?.Invoke(this);
-                    }
+                            OnUsed?.Invoke(this);
+                        }
 
-                    ret = true;
-                }, keepGoingOn);
+                        ret = true;
+                    }, keepGoingOn);
 
-                yield return new WaitUntil(() => ret);
+                    yield return new WaitUntil(() => ret);
 
-                if (b)
-                    yield break;
+                    if (b)
+                        yield break;
+                }
             }
 
             onFinish?.Invoke(default);
