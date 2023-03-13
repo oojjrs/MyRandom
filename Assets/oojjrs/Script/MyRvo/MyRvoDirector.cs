@@ -5,9 +5,12 @@ namespace Assets.oojjrs.Script.MyRvo
     [RequireComponent(typeof(MyRvoAgent))]
     public class MyRvoDirector : MonoBehaviour, MyRvoDirectorInterface
     {
+        bool MyRvoDirectorInterface.Working => Working;
+
         private MyRvoAgentInterface Agent { get; set; }
         private Vector3? LastAvoidance { get; set; }
         private float LastTime { get; set; }
+        public bool Working { get; set; }
 
         private void Start()
         {

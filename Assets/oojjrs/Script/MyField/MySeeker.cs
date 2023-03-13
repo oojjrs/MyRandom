@@ -57,7 +57,7 @@ namespace Assets.oojjrs.Script.MyField
                             var distance = UpdateCurrentNodeLastTimeOffset(GetTime()) * CurrentSpeed;
                             var v = Vector3.ClampMagnitude((CurrentNode.TileIntermediate.Position - pos) + CurrentNode.Power ?? Path.Destination - pos, distance);
 
-                            if (RvoDirector != default)
+                            if ((RvoDirector != default) && RvoDirector.Working)
                             {
                                 // 긴급 피난일 때에는 목적지로 바로 가야지 쓸데 없는 짓 하면 안 된다.
                                 if (CurrentNode.Reachable)
