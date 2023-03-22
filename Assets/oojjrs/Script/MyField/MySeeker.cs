@@ -17,6 +17,7 @@ namespace Assets.oojjrs.Script.MyField
         private MyRvoDirectorInterface RvoDirector { get; set; }
 
         private event Func<float> GetTime;
+        public event Action<string> OnDebug;
 
         private void Start()
         {
@@ -56,6 +57,7 @@ namespace Assets.oojjrs.Script.MyField
                         {
                             var distance = UpdateCurrentNodeLastTimeOffset(GetTime()) * CurrentSpeed;
                             var v = Vector3.ClampMagnitude((CurrentNode.TileIntermediate.Position - pos) + CurrentNode.Power ?? Path.Destination - pos, distance);
+                            var vd = v;
 
                             if ((RvoDirector != default) && RvoDirector.Working)
                             {
@@ -68,6 +70,28 @@ namespace Assets.oojjrs.Script.MyField
                                     v = RvoDirector.Modify(v, CurrentNodeLastTimeOffset);
                                 }
                             }
+
+#if UNITY_EDITOR
+                            if ((RvoDirector != default) && RvoDirector.Working)
+                            {
+                                // 긴급 피난일 때에는 목적지로 바로 가야지 쓸데 없는 짓 하면 안 된다.
+                                if (CurrentNode.Reachable)
+                                {
+                                    if (v != vd)
+                                        OnDebug?.Invoke("RVO WORKING");
+                                    else
+                                        OnDebug?.Invoke("NO CORRECTION");
+                                }
+                                else
+                                {
+                                    OnDebug?.Invoke("EMERGENCY MOVING");
+                                }
+                            }
+                            else
+                            {
+                                OnDebug?.Invoke("NO RVO");
+                            }
+#endif
 
                             if (RvoCount > 0)
                             {
