@@ -133,6 +133,12 @@ namespace Assets.oojjrs.Script.MyField
                 onFinish?.Invoke();
         }
 
+        public bool CanMove(Vector2Int c)
+        {
+            var node = GetNode(c);
+            return (node != default) && node.TileIntermediate.Tile.Walkable;
+        }
+
         private IEnumerable<Node> GetFixeds(Node node)
         {
             foreach (var coordinate in node.TileIntermediate.Neighbors)

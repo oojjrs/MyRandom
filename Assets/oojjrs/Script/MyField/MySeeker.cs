@@ -15,6 +15,7 @@ namespace Assets.oojjrs.Script.MyField
         // 몇 번까지 와리가리 헤맬 수 있는가.
         private int RvoCount { get; set; }
         private MyRvoDirectorInterface RvoDirector { get; set; }
+        private bool StraightDirection { get; set; }
 
         private event Func<float> GetTime;
         public event Action<string> OnDebug;
@@ -56,7 +57,7 @@ namespace Assets.oojjrs.Script.MyField
                         if (isIn)
                         {
                             var distance = UpdateCurrentNodeLastTimeOffset(GetTime()) * CurrentSpeed;
-                            var v = Vector3.ClampMagnitude((CurrentNode.TileIntermediate.Position - pos) + CurrentNode.Power ?? Path.Destination - pos, distance);
+                            var v = Vector3.ClampMagnitude(StraightDirection ? (Path.Destination - pos) : ((CurrentNode.TileIntermediate.Position - pos) + CurrentNode.Power ?? Path.Destination - pos), distance);
                             var vd = v;
 
                             if ((RvoDirector != default) && RvoDirector.Working)
@@ -131,7 +132,7 @@ namespace Assets.oojjrs.Script.MyField
             Processing = Path != default;
         }
 
-        public void StartMove(MyPath path, float speed, bool startImmediately, Func<float> getTime)
+        public void StartMove(MyPath path, float speed, bool startImmediately, bool straightDirection, Func<float> getTime)
         {
             if (getTime == default)
                 getTime = () => Time.time;
@@ -142,6 +143,7 @@ namespace Assets.oojjrs.Script.MyField
             Path = path;
             Processing = startImmediately;
             RvoCount = 80;
+            StraightDirection = straightDirection;
 
             GetTime = getTime;
         }
@@ -154,6 +156,7 @@ namespace Assets.oojjrs.Script.MyField
             Path = default;
             Processing = false;
             RvoCount = 0;
+            StraightDirection = false;
         }
 
         private float UpdateCurrentNodeLastTimeOffset(float now)
