@@ -63,7 +63,7 @@ namespace Assets.oojjrs.Script.MyField
             }
         }
 
-        public void Search(Vector3 src, Vector3 dst, Vector2Int from, Vector2Int to, Action<MyPath> onFinish, Func<bool> keepGoingOn = default)
+        public void Search(Vector3 src, Vector3 dst, Vector2Int from, Vector2Int to, bool strict, Action<MyPath> onFinish, Func<bool> keepGoingOn = default)
         {
             Debug.Assert(Tiles.Count > 0, "타일 정보가 없는데요? SetField부터 호출해주세요.");
 
@@ -86,10 +86,18 @@ namespace Assets.oojjrs.Script.MyField
                         }, keepGoingOn);
                     }
                     // 도착지 근처를 찾아서 보내주는 것도 일인데...
+                    else if (strict)
+                    {
+                        onFinish?.Invoke(default);
+                    }
                     else
                     {
                         _ = StartCoroutine(SearchAroundTiles(src, dst, fromTile, toTile, onFinish, keepGoingOn));
                     }
+                }
+                else if (strict)
+                {
+                    onFinish?.Invoke(default);
                 }
                 // 출발지가 망가진 경우인데, 이 경우는 뭐 다른 곳으로 갈 수가 없고 그냥 출발지에서 긴급 탈출이 필요한 케이스다.
                 else
@@ -154,7 +162,7 @@ namespace Assets.oojjrs.Script.MyField
             var groups = toTile.Tile.AroundCoordinates.Select(c => Tiles.TryGetValue(c, out var tile) ? tile : default).Where(t => (t != default) && t.Tile.Walkable).GroupBy(t => t.Tile.GetCost(toTile.Tile)).OrderBy(g => g.Key);
             foreach (var group in groups)
             {
-                foreach (var aroundTile in group.OrderBy(t => (t.Position - dst).sqrMagnitude).ThenBy(t => (t.Position - src).sqrMagnitude))
+                foreach (var aroundTile in group.OrderBy(t => (t.Position - dst).sqrMagnitude + (t.Position - src).sqrMagnitude))
                 {
                     var b = false;
                     var ret = false;
