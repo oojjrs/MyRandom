@@ -17,7 +17,7 @@ namespace Assets.oojjrs.Script.MyField
 
         private event Func<Vector3, Vector2Int> PositionToCoordinate;
         public event Action<MyNavigator> OnUpdated;
-        public event Action<MyNavigator> OnUsed;
+        public event Action<MyNavigator, Vector3> OnUsed;
 
         public void Calculate(Vector2Int to, Action<MyNavigator, MyFlowField> onFinish, Func<bool> keepGoingOn = default)
         {
@@ -82,7 +82,7 @@ namespace Assets.oojjrs.Script.MyField
                             var path = ff.GetPath(from, src, dst);
                             onFinish?.Invoke(path);
 
-                            OnUsed?.Invoke(this);
+                            OnUsed?.Invoke(this, path.Destination);
                         }, keepGoingOn);
                     }
                     // 도착지 근처를 찾아서 보내주는 것도 일인데...
@@ -140,7 +140,7 @@ namespace Assets.oojjrs.Script.MyField
                             var path = ff.GetPath(closestTile.Coordinate, src, closestTile.Position);
                             onFinish?.Invoke(path);
 
-                            OnUsed?.Invoke(this);
+                            OnUsed?.Invoke(this, path.Destination);
                         }, keepGoingOn);
                     }
                     else
@@ -175,7 +175,7 @@ namespace Assets.oojjrs.Script.MyField
 
                             onFinish?.Invoke(path);
 
-                            OnUsed?.Invoke(this);
+                            OnUsed?.Invoke(this, path.Destination);
                         }
 
                         ret = true;
@@ -190,7 +190,7 @@ namespace Assets.oojjrs.Script.MyField
 
             onFinish?.Invoke(default);
 
-            OnUsed?.Invoke(this);
+            OnUsed?.Invoke(this, dst);
         }
 
         public void SetField(MyFlowField.TileInterface[] tiles, Func<Vector3, Vector2Int> positionToCoordinate)
