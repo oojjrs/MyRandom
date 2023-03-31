@@ -65,10 +65,13 @@ namespace Assets.oojjrs.Script.MyField
                                 // 긴급 피난일 때에는 목적지로 바로 가야지 쓸데 없는 짓 하면 안 된다.
                                 if (CurrentNode.Reachable)
                                 {
-                                    if (CurrentNode.Target || (CurrentNode.NextNode?.Target == true))
-                                        --RvoCount;
-
                                     v = RvoDirector.Modify(v, CurrentNodeLastTimeOffset);
+
+                                    if (v != vd)
+                                    {
+                                        if (CurrentNode.Target || (CurrentNode.NextNode?.Target == true))
+                                            --RvoCount;
+                                    }
                                 }
                             }
 
