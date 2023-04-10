@@ -17,7 +17,7 @@ namespace Assets.oojjrs.Script.Editor
         private Dictionary<string, Texture2D> TextureCache { get; } = new();
         private Dictionary<object, bool> ToggleGroupCache { get; } = new();
 
-        public EditorControl(ClientBridgeInterface clientBridge)
+        internal EditorControl(ClientBridgeInterface clientBridge)
         {
             ClientBridge = clientBridge;
         }
@@ -79,6 +79,11 @@ namespace Assets.oojjrs.Script.Editor
         {
             TextureCache.TryGetValue(name, out var texture);
             return texture;
+        }
+
+        public Vector3 GetVector3(string name)
+        {
+            return ClientBridge.GetVector3(GetType().Name + "." + name);
         }
 
         // 함수명이 왜 이러냐고 묻지 마라
@@ -205,6 +210,14 @@ namespace Assets.oojjrs.Script.Editor
 
             action?.Invoke();
             EditorGUILayout.EndToggleGroup();
+        }
+
+        public void Vector3Field(string name)
+        {
+            var value = GetVector3(GetType().Name + "." + name);
+            var newValue = EditorGUILayout.Vector3Field(name, value);
+            if (newValue != value)
+                ClientBridge.SetVector3(GetType().Name + "." + name, newValue);
         }
 
         public void Vertical(Action action)
