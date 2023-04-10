@@ -212,10 +212,10 @@ namespace Assets.oojjrs.Script.Editor
             EditorGUILayout.EndToggleGroup();
         }
 
-        public void Vector3Field(string name)
+        public void Vector3Field(string name, string label)
         {
-            var value = GetVector3(GetType().Name + "." + name);
-            var newValue = EditorGUILayout.Vector3Field(name, value);
+            var value = GetVector3(name);
+            var newValue = EditorGUILayout.Vector3Field(label, value);
             if (newValue != value)
                 ClientBridge.SetVector3(GetType().Name + "." + name, newValue);
         }
