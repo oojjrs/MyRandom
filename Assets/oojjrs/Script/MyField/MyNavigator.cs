@@ -90,7 +90,7 @@ namespace Assets.oojjrs.Script.MyField
                             var path = ff.GetPath(from, src, dst);
                             onFinish?.Invoke(path);
 
-                            OnUsed?.Invoke(this, path.Destination);
+                            OnUsed?.Invoke(this, path?.Destination ?? Vector3.zero);
                         }, keepGoingOn);
                     }
                     // 도착지 근처를 찾아서 보내주는 것도 일인데...
@@ -148,7 +148,7 @@ namespace Assets.oojjrs.Script.MyField
                             var path = ff.GetPath(closestTile.Coordinate, src, closestTile.Position);
                             onFinish?.Invoke(path);
 
-                            OnUsed?.Invoke(this, path.Destination);
+                            OnUsed?.Invoke(this, path?.Destination ?? Vector3.zero);
                         }, keepGoingOn);
                     }
                     else
@@ -183,7 +183,7 @@ namespace Assets.oojjrs.Script.MyField
 
                             onFinish?.Invoke(path);
 
-                            OnUsed?.Invoke(this, path.Destination);
+                            OnUsed?.Invoke(this, path?.Destination ?? Vector3.zero);
                         }
 
                         ret = true;
