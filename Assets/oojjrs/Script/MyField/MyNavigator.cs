@@ -63,6 +63,14 @@ namespace Assets.oojjrs.Script.MyField
             }
         }
 
+        public bool IsWalkable(Vector2Int to)
+        {
+            if (Tiles.TryGetValue(to, out var tile))
+                return tile.Tile.Walkable;
+            else
+                return false;
+        }
+
         public void Search(Vector3 src, Vector3 dst, Vector2Int from, Vector2Int to, bool strict, Action<MyPath> onFinish, Func<bool> keepGoingOn = default)
         {
             Debug.Assert(Tiles.Count > 0, "타일 정보가 없는데요? SetField부터 호출해주세요.");
