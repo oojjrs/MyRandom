@@ -83,46 +83,51 @@ namespace Assets.oojjrs.Script.MyField
             PositionToCoordinate = positionToCoordinate;
         }
 
+        public void Calculate(Func<bool> keepGoingOn = default)
+        {
+            if (keepGoingOn == default)
+                keepGoingOn = () => true;
+
+            var q = new Queue<Node>();
+            q.Enqueue(TargetNode);
+
+            if (TargetNode.TileIntermediate.Tile.Walkable)
+            {
+                while (keepGoingOn() && (q.Count > 0))
+                {
+                    var node = q.Dequeue();
+                    var ret = GetNeighbors(node).Where(t => t.Fixed == false);
+                    if (ret.Any())
+                    {
+                        var neighbors = ret.ToArray();
+                        foreach (var neighborNode in neighbors)
+                        {
+                            if (neighborNode.TileIntermediate.Tile.Walkable)
+                            {
+                                var lowestCostNode = GetFixeds(neighborNode).OrderBy(t => t.CostToTarget).First();
+                                neighborNode.CostToTarget = lowestCostNode.CostToTarget + lowestCostNode.TileIntermediate.Tile.GetCost(neighborNode.TileIntermediate.Tile);
+                                neighborNode.NextNode = lowestCostNode;
+                                neighborNode.Power = lowestCostNode.TileIntermediate.Position - neighborNode.TileIntermediate.Position;
+
+                                // walkable의 친구들만 검사하는 게 맞지.
+                                q.Enqueue(neighborNode);
+                            }
+                        }
+
+                        foreach (var nnode in neighbors)
+                            nnode.Fixed = true;
+                    }
+                }
+            }
+        }
+
         public IEnumerator CalculateAsync(Action onFinish, Func<bool> keepGoingOn)
         {
             Calculating = true;
 
             ThreadPool.QueueUserWorkItem(args =>
             {
-                if (keepGoingOn == default)
-                    keepGoingOn = () => true;
-
-                var q = new Queue<Node>();
-                q.Enqueue(TargetNode);
-
-                if (TargetNode.TileIntermediate.Tile.Walkable)
-                {
-                    while (keepGoingOn() && (q.Count > 0))
-                    {
-                        var node = q.Dequeue();
-                        var ret = GetNeighbors(node).Where(t => t.Fixed == false);
-                        if (ret.Any())
-                        {
-                            var neighbors = ret.ToArray();
-                            foreach (var neighborNode in neighbors)
-                            {
-                                if (neighborNode.TileIntermediate.Tile.Walkable)
-                                {
-                                    var lowestCostNode = GetFixeds(neighborNode).OrderBy(t => t.CostToTarget).First();
-                                    neighborNode.CostToTarget = lowestCostNode.CostToTarget + lowestCostNode.TileIntermediate.Tile.GetCost(neighborNode.TileIntermediate.Tile);
-                                    neighborNode.NextNode = lowestCostNode;
-                                    neighborNode.Power = lowestCostNode.TileIntermediate.Position - neighborNode.TileIntermediate.Position;
-
-                                    // walkable의 친구들만 검사하는 게 맞지.
-                                    q.Enqueue(neighborNode);
-                                }
-                            }
-
-                            foreach (var nnode in neighbors)
-                                nnode.Fixed = true;
-                        }
-                    }
-                }
+                Calculate(keepGoingOn);
 
                 Calculating = false;
             });
