@@ -127,6 +127,9 @@ namespace Assets.oojjrs.Script.MyField
 
             ThreadPool.QueueUserWorkItem(args =>
             {
+                if (keepGoingOn == default)
+                    keepGoingOn = () => true;
+
                 Calculate(keepGoingOn);
 
                 Calculating = false;
