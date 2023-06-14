@@ -37,7 +37,7 @@ namespace Assets.Scenes.FlowField
 
             _navigator.SetField(ret.ToArray(), pos => new((int)pos.x, (int)pos.z));
 
-            _navigator.Calculate(Vector2Int.zero, (nav, field) =>
+            _navigator.CalculateAsync(Vector2Int.zero, (nav, field) =>
             {
                 foreach (var tile in ret)
                     tile.UpdateDirection(field.GetNode(((MyFlowField.TileInterface)tile).Coordinate).Power);
