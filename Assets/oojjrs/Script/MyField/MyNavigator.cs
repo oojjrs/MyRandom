@@ -121,7 +121,7 @@ namespace Assets.oojjrs.Script.MyField
                 return false;
         }
 
-        public MyPath Search(Vector3 src, Vector3 dst, Vector2Int from, Vector2Int to, bool strict)
+        public MyPath Search(Vector3 src, Vector3 dst, Vector2Int from, Vector2Int to, bool strictFrom, bool strictTo)
         {
             Debug.Assert(Tiles.Count > 0, "타일 정보가 없는데요? SetField부터 호출해주세요.");
 
@@ -149,7 +149,7 @@ namespace Assets.oojjrs.Script.MyField
                         }
                     }
                     // 도착지 근처를 찾아서 보내주는 것도 일인데...
-                    else if (strict)
+                    else if (strictTo)
                     {
                         return default;
                     }
@@ -158,7 +158,7 @@ namespace Assets.oojjrs.Script.MyField
                         return SearchAroundTiles(src, dst, fromTile, toTile);
                     }
                 }
-                else if (strict)
+                else if (strictFrom)
                 {
                     return default;
                 }
@@ -195,7 +195,7 @@ namespace Assets.oojjrs.Script.MyField
             }
         }
 
-        public void SearchAsync(Vector3 src, Vector3 dst, Vector2Int from, Vector2Int to, bool strict, Action<MyPath> onFinish, Func<bool> keepGoingOn = default)
+        public void SearchAsync(Vector3 src, Vector3 dst, Vector2Int from, Vector2Int to, bool strictFrom, bool strictTo, Action<MyPath> onFinish, Func<bool> keepGoingOn = default)
         {
             Debug.Assert(Tiles.Count > 0, "타일 정보가 없는데요? SetField부터 호출해주세요.");
 
@@ -227,7 +227,7 @@ namespace Assets.oojjrs.Script.MyField
                         }, keepGoingOn);
                     }
                     // 도착지 근처를 찾아서 보내주는 것도 일인데...
-                    else if (strict)
+                    else if (strictTo)
                     {
                         onFinish?.Invoke(default);
                     }
@@ -236,7 +236,7 @@ namespace Assets.oojjrs.Script.MyField
                         _ = StartCoroutine(SearchAroundTilesAsync(src, dst, fromTile, toTile, onFinish, keepGoingOn));
                     }
                 }
-                else if (strict)
+                else if (strictFrom)
                 {
                     onFinish?.Invoke(default);
                 }
