@@ -6,6 +6,7 @@ namespace Assets.oojjrs.Script.MyRvo
 {
     public class MyRvoAgentContainer
     {
+        private Dictionary<MyRvoAgentInterface, MyRvoObstacleInterface> ObstacleCached { get; } = new();
         private List<MyRvoObstacleInterface> Values { get; } = new();
 
         public void Add(MyRvoAgentInterface agent)
@@ -24,18 +25,33 @@ namespace Assets.oojjrs.Script.MyRvo
 
         public void Clear()
         {
+            ObstacleCached.Clear();
             Values.Clear();
         }
 
         public MyRvoObstacleInterface GetObstacle(Vector3 pos, MyRvoAgentInterface me)
         {
-            return Values.FirstOrDefault(t => (t != me) && t.IsCollidedInXZ(pos));
+            if (ObstacleCached.TryGetValue(me, out var value))
+            {
+                if (value.IsCollidedInXZ(pos))
+                    return value;
+            }
+
+            value = Values.FirstOrDefault(t => (t != me) && t.IsCollidedInXZ(pos));
+            if (value != default)
+                ObstacleCached[me] = value;
+
+            return value;
         }
 
         public void Remove(MyRvoAgentInterface agent)
         {
             if (Values.Remove(agent))
+            {
+                ObstacleCached.Remove(agent);
+
                 agent.Container = default;
+            }
         }
     }
 }

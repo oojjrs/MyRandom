@@ -57,8 +57,8 @@ namespace Assets.oojjrs.Script.MyRvo
             var count = 0;
             while (obstacle != default)
             {
-                // 10번 이상 길 찾고 있으면 못 찾았다고 생각하자구
-                if (count > 10)
+                // N번 이상 길 찾고 있으면 못 찾았다고 생각하자구
+                if (count > 5)
                     break;
 
                 ++count;

@@ -6,25 +6,36 @@ namespace Assets.oojjrs.Script.MyRvo
     {
         MyRvoAgentContainer MyRvoAgentInterface.Container { get; set; }
         Vector3 MyRvoObstacleInterface.Position => Position;
-        float MyRvoObstacleInterface.Radius => Radius;
+        float MyRvoObstacleInterface.Radius => _radius;
+
+        // 극한의 최적화
+        private Vector3 _previousPosition;
+        private float _radius;
+        private float _sqrRadius;
 
         public Vector3 Forward => Velocity.normalized;
         private Vector3 Position => transform.position;
-        private Vector3 PreviousPosition { get; set; }
-        public float Radius { get; set; }
+        public float Radius
+        {
+            set
+            {
+                _radius = value;
+                _sqrRadius = value * value;
+            }
+        }
         public Vector3 Velocity { get; set; }
 
         private void Start()
         {
-            PreviousPosition = transform.position;
+            _previousPosition = transform.position;
         }
 
         private void Update()
         {
-            if (Position != PreviousPosition)
+            if (Position != _previousPosition)
             {
-                Velocity = Position - PreviousPosition;
-                PreviousPosition = Position;
+                Velocity = Position - _previousPosition;
+                _previousPosition = Position;
             }
             else
             {
@@ -34,9 +45,9 @@ namespace Assets.oojjrs.Script.MyRvo
 
         bool MyRvoObstacleInterface.IsCollidedInXZ(Vector3 pos)
         {
-            var a = new Vector2(transform.position.x, transform.position.z);
-            var b = new Vector2(pos.x, pos.z);
-            return Vector2.Distance(a, b) <= Radius;
+            var lx = _previousPosition.x - pos.x;
+            var lz = _previousPosition.z - pos.z;
+            return lx * lx + lz * lz <= _sqrRadius;
         }
     }
 }
