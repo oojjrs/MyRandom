@@ -11,6 +11,9 @@ namespace Assets.oojjrs.Script.MyRvo
 
         public void Add(MyRvoAgentInterface agent)
         {
+            if (agent.Alive == false)
+                return;
+
             if (Values.Contains(agent) == false)
             {
                 agent.Container = this;
@@ -33,7 +36,7 @@ namespace Assets.oojjrs.Script.MyRvo
         {
             if (ObstacleCached.TryGetValue(me, out var value))
             {
-                if (value.IsCollidedInXZ(pos))
+                if (value.Alive && value.IsCollidedInXZ(pos))
                     return value;
             }
 

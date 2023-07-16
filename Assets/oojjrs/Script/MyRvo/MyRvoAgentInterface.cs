@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace Assets.oojjrs.Script.MyRvo
+﻿namespace Assets.oojjrs.Script.MyRvo
 {
     public interface MyRvoAgentInterface : MyRvoObstacleInterface
     {

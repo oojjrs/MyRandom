@@ -4,6 +4,7 @@ namespace Assets.oojjrs.Script.MyRvo
 {
     public class MyRvoAgent : MonoBehaviour, MyRvoAgentInterface
     {
+        bool MyRvoObstacleInterface.Alive => Alive;
         MyRvoAgentContainer MyRvoAgentInterface.Container { get; set; }
         Vector3 MyRvoObstacleInterface.Position => Position;
         float MyRvoObstacleInterface.Radius => _radius;
@@ -13,6 +14,8 @@ namespace Assets.oojjrs.Script.MyRvo
         private float _radius;
         private float _sqrRadius;
 
+        // TODO : 올바른 방법은 아니지만, Start 호출 시점을 보장할 수 없으니까 true로 시작한다.
+        private bool Alive { get; set; } = true;
         public Vector3 Forward => Velocity.normalized;
         private Vector3 Position => transform.position;
         public float Radius
@@ -24,6 +27,11 @@ namespace Assets.oojjrs.Script.MyRvo
             }
         }
         public Vector3 Velocity { get; set; }
+
+        private void OnDestroy()
+        {
+            Alive = false;
+        }
 
         private void Start()
         {
