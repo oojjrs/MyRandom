@@ -25,7 +25,7 @@ namespace Assets.oojjrs.Script.MyRvo
             if (obstacle == default)
                 return velocity;
 
-            if (LastAvoidance.HasValue && (time - LastTime < 0.1f))
+            if (LastAvoidance.HasValue && (time - LastTime < 0.2f))
                 return LastAvoidance.Value;
 
             // 우측 회피를 우선으로 하겠다.
