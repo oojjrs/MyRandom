@@ -6,15 +6,21 @@ namespace Assets.oojjrs.Script.MyField
 {
     public class MySeeker : MonoBehaviour
     {
+        public interface MovementGraphInterface
+        {
+            float GetCurrentSpeed(float t);
+        }
+
         private MyFlowField.NodeInterface CurrentNode { get; set; }
         private float CurrentNodeLastTimeOffset { get; set; }
-        public float CurrentSpeed { get; private set; }
+        private MovementGraphInterface MovementGraph { get; set; }
         public MyPath Path { get; private set; }
         public bool Processing { get; private set; }
         public bool ReachedEndOfPath => CurrentNode == default;
         // 몇 번까지 와리가리 헤맬 수 있는가.
         private int RvoCount { get; set; }
         private MyRvoDirectorInterface RvoDirector { get; set; }
+        private float StartTimeOffset { get; set; }
         private bool StraightDirection { get; set; }
 
         private event Func<float> GetTime;
@@ -29,7 +35,7 @@ namespace Assets.oojjrs.Script.MyField
         {
             if (Processing)
             {
-                if ((Path != default) && (CurrentNode != default))
+                if ((Path != default) && (CurrentNode != default) && (MovementGraph != default))
                 {
                     var pos = transform.position;
                     if ((pos - Path.Destination).magnitude > float.Epsilon)
@@ -56,7 +62,7 @@ namespace Assets.oojjrs.Script.MyField
 
                         if (isIn)
                         {
-                            var distance = UpdateCurrentNodeLastTimeOffset(GetTime()) * CurrentSpeed;
+                            var distance = UpdateCurrentNodeLastTimeOffset(GetTime()) * MovementGraph.GetCurrentSpeed(CurrentNodeLastTimeOffset - StartTimeOffset);
                             var v = Vector3.ClampMagnitude(StraightDirection ? (Path.Destination - pos) : ((CurrentNode.TileIntermediate.Position - pos) + CurrentNode.Power ?? Path.Destination - pos), distance);
                             var vd = v;
 
@@ -135,17 +141,18 @@ namespace Assets.oojjrs.Script.MyField
             Processing = Path != default;
         }
 
-        public void StartMove(MyPath path, float speed, bool startImmediately, bool straightDirection, Func<float> getTime)
+        public void StartMove(MyPath path, MovementGraphInterface mgi, bool startImmediately, bool straightDirection, Func<float> getTime)
         {
             if (getTime == default)
                 getTime = () => Time.time;
 
             CurrentNode = path.FromNode;
             CurrentNodeLastTimeOffset = getTime();
-            CurrentSpeed = speed;
+            MovementGraph = mgi;
             Path = path;
             Processing = startImmediately;
             RvoCount = 80;
+            StartTimeOffset = CurrentNodeLastTimeOffset;
             StraightDirection = straightDirection;
 
             GetTime = getTime;
@@ -155,10 +162,11 @@ namespace Assets.oojjrs.Script.MyField
         {
             CurrentNode = default;
             CurrentNodeLastTimeOffset = 0;
-            CurrentSpeed = 0;
+            MovementGraph = default;
             Path = default;
             Processing = false;
             RvoCount = 0;
+            StartTimeOffset = 0;
             StraightDirection = false;
         }
 
