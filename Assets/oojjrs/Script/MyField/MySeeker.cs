@@ -62,8 +62,15 @@ namespace Assets.oojjrs.Script.MyField
 
                         if (isIn)
                         {
+                            var v1 = StraightDirection ? (Path.Destination - pos) : ((CurrentNode.TileIntermediate.Position - pos) + CurrentNode.Power ?? Path.Destination - pos);
                             var distance = UpdateCurrentNodeLastTimeOffset(GetTime()) * MovementGraph.GetCurrentSpeed(CurrentNodeLastTimeOffset - StartTimeOffset);
-                            var v = Vector3.ClampMagnitude(StraightDirection ? (Path.Destination - pos) : ((CurrentNode.TileIntermediate.Position - pos) + CurrentNode.Power ?? Path.Destination - pos), distance);
+                            if (distance <= 0)
+                            {
+                                transform.forward = v1.normalized;
+                                return;
+                            }
+
+                            var v = Vector3.ClampMagnitude(v1, distance);
                             var vd = v;
 
                             if ((RvoDirector != default) && RvoDirector.Working)
