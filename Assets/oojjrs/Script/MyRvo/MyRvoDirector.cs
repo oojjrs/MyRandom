@@ -19,6 +19,21 @@ namespace Assets.oojjrs.Script.MyRvo
 
         Vector3 MyRvoDirectorInterface.Modify(Vector3 velocity, float time)
         {
+            if (Agent == default)
+                Agent = GetComponent<MyRvoAgentInterface>();
+
+            if (Agent == default)
+            {
+                Debug.LogWarning($"이게 왜 없지");
+                return velocity;
+            }
+
+            if (Agent.Container == default)
+            {
+                Debug.LogWarning($"이건 또 왜 없지");
+                return velocity;
+            }
+
             var vdir = velocity.normalized;
             var nextPosition = Agent.Position + velocity;
             var obstacle = Agent.Container.GetObstacle(nextPosition, Agent);

@@ -53,7 +53,8 @@ namespace Assets.oojjrs.Script.MyRvo
             {
                 ObstacleCached.Remove(agent);
 
-                agent.Container = default;
+                // 없애지 말아봐 치명적인 버그가 생겨 (23.08.31)
+                //agent.Container = default;
             }
         }
     }
